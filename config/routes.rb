@@ -7,5 +7,9 @@ Rails.application.routes.draw do
     resources :documents
   end
 
+  post 'authenticate', to: 'authentication#authenticate'
+
+  post 'login', to: 'users#login_user'
+
   resources :roles
 end

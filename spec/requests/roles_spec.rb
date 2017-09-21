@@ -4,10 +4,14 @@ RSpec.describe 'Roles API', type: :request do
   # initialize test data 
   let!(:roles) { create_list(:role, 4) }
   let(:role_id) { roles.first.id }
-  
+  # let(:auth_headers) {
+  #   { 'HTTP-AUTHORIZATION' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE1MDYwOTE1NDR9.qYzck5J5ouRQPA7W-0S-RsI030YYIr_NHaoTR6sPpLQ' }
+  # }
 
   describe 'GET /roles' do
-    before { get '/roles' }
+    # before { get '/roles', {}, auth_headers }
+    before { get '/roles', headers: {
+      'AUTHORIZATION': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE1MDYwOTE1NDR9.qYzck5J5ouRQPA7W-0S-RsI030YYIr_NHaoTR6sPpLQ' } }
    
     it 'returns roles' do
       expect(json).not_to be_empty

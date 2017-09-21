@@ -3,5 +3,5 @@ class User < ApplicationRecord
   has_many :documents, dependent: :destroy
 
   has_secure_password
-  validates_presence_of :name, :password, :email
+  validates_presence_of :name, :email
 end
