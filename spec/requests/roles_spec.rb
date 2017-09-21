@@ -1,18 +1,27 @@
 require 'rails_helper'
+require 'jwt'
 
 RSpec.describe 'Roles API', type: :request do
   # initialize test data 
   let!(:roles) { create_list(:role, 4) }
+  let!(:users) { create_list(:user, 4, role_id: roles.first.id) }
   let(:role_id) { roles.first.id }
+  let!(:user_id) { users.first.id }
+
   # let(:auth_headers) {
   #   { 'HTTP-AUTHORIZATION' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE1MDYwOTE1NDR9.qYzck5J5ouRQPA7W-0S-RsI030YYIr_NHaoTR6sPpLQ' }
   # }
 
   describe 'GET /roles' do
     # before { get '/roles', {}, auth_headers }
-    before { get '/roles', headers: {
-      'AUTHORIZATION': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE1MDYwOTE1NDR9.qYzck5J5ouRQPA7W-0S-RsI030YYIr_NHaoTR6sPpLQ' } }
-   
+    before do 
+       token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+       get '/roles', headers: {'Authorization': "#{token}" }
+    end
+ 
+    # before { get '/roles', headers: {
+    #   'AUTHORIZATION': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE1MDYwOTE1NDR9.qYzck5J5ouRQPA7W-0S-RsI030YYIr_NHaoTR6sPpLQ' } }
+
     it 'returns roles' do
       expect(json).not_to be_empty
       expect(json.size).to eq(4)
@@ -24,7 +33,11 @@ RSpec.describe 'Roles API', type: :request do
   end
 
   describe 'GET /roles/:id' do
-    before { get "/roles/#{role_id}" }
+
+    before do 
+      token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+      get "/roles/#{role_id}", headers: {'Authorization': "#{token}" }
+    end
 
     context 'when the record exists' do
       it 'returns the role' do
@@ -55,7 +68,10 @@ RSpec.describe 'Roles API', type: :request do
     let(:valid_attributes) { { role: 'fellow', description: 'normal user' } }
 
     context 'when the request is valid' do
-      before { post '/roles', params: valid_attributes }
+      before do 
+        token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+        post '/roles',  params: valid_attributes, headers: {'Authorization': "#{token}" }
+      end
 
       it 'creates a role' do
         expect(json['role']).to eq('fellow')
@@ -67,7 +83,10 @@ RSpec.describe 'Roles API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/roles', params: { title: 'Pikolo' } }
+      before do 
+        token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+        post '/roles', params: { title: 'Pikolo' }, headers: {'Authorization': "#{token}" }
+      end
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -84,7 +103,10 @@ RSpec.describe 'Roles API', type: :request do
     let(:valid_attributes) { { role: 'public' } }
 
     context 'when the record exists' do
-      before { put "/roles/#{role_id}", params: valid_attributes }
+      before do 
+        token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+        put "/roles/#{role_id}", params: valid_attributes, headers: {'Authorization': "#{token}" }
+      end
 
       it 'updates the record' do
         expect(response.body).to be_empty
@@ -97,7 +119,10 @@ RSpec.describe 'Roles API', type: :request do
   end
 
   describe 'DELETE /roles/:id' do
-    before { delete "/roles/#{role_id}" }
+    before do 
+      token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+      delete "/roles/#{role_id}", headers: {'Authorization': "#{token}" }
+    end
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
