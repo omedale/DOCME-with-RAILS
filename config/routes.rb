@@ -10,5 +10,6 @@ Rails.application.routes.draw do
   post 'authenticate', to: 'authentication#authenticate'
 
   post 'login', to: 'users#login_user'
+  post 'register', to: 'users#register'
 
 end

@@ -8,8 +8,11 @@ class RolesController < ApplicationController
   end
 
   def create
-    @role = Role.create!(role_params)
-    json_response(@role, :created)
+   @role = Role.create!(role_params)
+    if(@role.save)
+      return json_response(@role, :created)
+    end
+    return json_response(@role.errors, :created)
   end
 
   def show
