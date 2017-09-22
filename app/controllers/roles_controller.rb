@@ -3,7 +3,7 @@ class RolesController < ApplicationController
   before_action :set_role, only: [:show, :update, :destroy]
 
   def index
-    @role = Role.all
+    @role = Role.select(:id, :role).all
     json_response(@role)
   end
 

@@ -8,7 +8,13 @@ class UsersController < ApplicationController
   def register
     @user = User.create!(name: params[:name], email: params[:email], password: params[:password], role_id: 1)
     if(@user.save)
-      return json_response(@user, :created)
+      obj = {
+        name: @user.name,
+        email: @user.email,
+        role_id: @user.role_id,
+        message: 'User Succefully Created'
+      }
+      return json_response(obj, :created)
     end
     return json_response(@user.errors, :created)
   end
