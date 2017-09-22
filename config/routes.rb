@@ -12,4 +12,5 @@ Rails.application.routes.draw do
   post 'login', to: 'users#login_user'
   post 'register', to: 'users#register'
 
+  match "/(*url)", to: "not_found#index", via: :all
 end
