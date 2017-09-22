@@ -11,5 +11,4 @@ Rails.application.routes.draw do
 
   post 'login', to: 'users#login_user'
 
-  resources :roles
 end

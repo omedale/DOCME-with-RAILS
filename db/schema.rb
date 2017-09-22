@@ -34,10 +34,10 @@ ActiveRecord::Schema.define(version: 20170921072948) do
     t.string "name"
     t.string "email"
     t.string "password"
+    t.string "password_digest"
     t.integer "role_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "password_digest"
     t.index ["role_id"], name: "index_users_on_role_id"
   end
 

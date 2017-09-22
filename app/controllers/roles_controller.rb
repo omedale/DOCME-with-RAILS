@@ -1,4 +1,5 @@
 class RolesController < ApplicationController
+  before_action :authorize
   before_action :set_role, only: [:show, :update, :destroy]
 
   def index
@@ -33,5 +34,13 @@ class RolesController < ApplicationController
 
   def set_role
     @role = Role.find(params[:id])
+  end
+
+  def authorize
+    unless  is_admin
+      status = 401
+      obj = {message: 'Unauthorized'}
+      json_response(obj, status)
+    end
   end
 end
