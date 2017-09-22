@@ -8,20 +8,14 @@ RSpec.describe 'Roles API', type: :request do
   let(:role_id) { roles.first.id }
   let!(:user_id) { users.first.id }
 
-  # let(:auth_headers) {
-  #   { 'HTTP-AUTHORIZATION' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE1MDYwOTE1NDR9.qYzck5J5ouRQPA7W-0S-RsI030YYIr_NHaoTR6sPpLQ' }
-  # }
+  let(:token) {JWT.encode({user_id: 2}, Rails.application.secrets.secret_key_base)}
 
   describe 'GET /roles' do
-    # before { get '/roles', {}, auth_headers }
-    before do 
-       token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+
+    before do  
        get '/roles', headers: {'Authorization': "#{token}" }
     end
- 
-    # before { get '/roles', headers: {
-    #   'AUTHORIZATION': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE1MDYwOTE1NDR9.qYzck5J5ouRQPA7W-0S-RsI030YYIr_NHaoTR6sPpLQ' } }
-
+  
     it 'returns roles' do
       expect(json).not_to be_empty
       expect(json.size).to eq(4)
@@ -35,7 +29,7 @@ RSpec.describe 'Roles API', type: :request do
   describe 'GET /roles/:id' do
 
     before do 
-      token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+      
       get "/roles/#{role_id}", headers: {'Authorization': "#{token}" }
     end
 
@@ -69,7 +63,7 @@ RSpec.describe 'Roles API', type: :request do
 
     context 'when the request is valid' do
       before do 
-        token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+        
         post '/roles',  params: valid_attributes, headers: {'Authorization': "#{token}" }
       end
 
@@ -84,7 +78,7 @@ RSpec.describe 'Roles API', type: :request do
 
     context 'when the request is invalid' do
       before do 
-        token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+        
         post '/roles', params: { title: 'Pikolo' }, headers: {'Authorization': "#{token}" }
       end
 
@@ -104,7 +98,7 @@ RSpec.describe 'Roles API', type: :request do
 
     context 'when the record exists' do
       before do 
-        token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+        
         put "/roles/#{role_id}", params: valid_attributes, headers: {'Authorization': "#{token}" }
       end
 
@@ -120,7 +114,7 @@ RSpec.describe 'Roles API', type: :request do
 
   describe 'DELETE /roles/:id' do
     before do 
-      token = JWT.encode({user_id: user_id}, Rails.application.secrets.secret_key_base)
+      
       delete "/roles/#{role_id}", headers: {'Authorization': "#{token}" }
     end
 
