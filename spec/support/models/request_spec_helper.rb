@@ -13,14 +13,14 @@ module RequestSpecHelper
 
   def valid_headers(id)
     {
-      "Authorization" => token_generator(id)
+      'Authorization' => token_generator(id)
     }
   end
 
   def invalid_headers
     {
-      "Authorization" => nil,
-      "Content-Type" => "application/json"
+      'Authorization' => nil,
+      'Content-Type' => 'application/json'
     }
   end
 end

@@ -7,10 +7,10 @@ RSpec.describe 'Roles API', type: :request do
   let!(:user_id) { users.first.id }
 
   describe 'GET /roles' do
-    before do  
-       get '/roles', headers: valid_headers(users.first.id)
+    before do
+      get '/roles', headers: valid_headers(users.first.id)
     end
-  
+
     it 'returns roles' do
       expect(json).not_to be_empty
       expect(json.size).to eq(4)
@@ -22,8 +22,7 @@ RSpec.describe 'Roles API', type: :request do
   end
 
   describe 'GET /roles/:id' do
-
-    before do      
+    before do
       get "/roles/#{role_id}", headers: valid_headers(users.first.id)
     end
 
@@ -56,9 +55,8 @@ RSpec.describe 'Roles API', type: :request do
     let(:valid_attributes) { { role: 'fellow', description: 'normal user' } }
 
     context 'when the request is valid' do
-      before do 
-        
-        post '/roles',  params: valid_attributes, headers: valid_headers(users.first.id)
+      before do
+        post '/roles', params: valid_attributes, headers: valid_headers(users.first.id)
       end
 
       it 'creates a role' do
@@ -71,8 +69,7 @@ RSpec.describe 'Roles API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before do 
-        
+      before do
         post '/roles', params: { title: 'Pikolo' }, headers: valid_headers(users.first.id)
       end
 
@@ -88,33 +85,38 @@ RSpec.describe 'Roles API', type: :request do
   end
 
   describe 'PUT /roles/:id' do
-    let(:valid_attributes) { { role: 'public' } }
+    let(:valid_attributes) { { role: 'public', description: 'make rain' } }
 
     context 'when the record exists' do
-      before do 
-        
+      before do
         put "/roles/#{role_id}", params: valid_attributes, headers: valid_headers(users.first.id)
       end
 
       it 'updates the record' do
-        expect(response.body).to be_empty
+        obj = JSON(response.body)
+        message = obj['message']
+        expect(message).to eq('Role Updated Succefully')
       end
 
-      it 'returns status code 204' do
-        expect(response).to have_http_status(204)
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
       end
     end
   end
 
   describe 'DELETE /roles/:id' do
-    before do 
-      
+    before do
       delete "/roles/#{role_id}", headers: valid_headers(users.first.id)
     end
 
-    it 'returns status code 204' do
-      expect(response).to have_http_status(204)
+    it 'deletes the record' do
+      obj = JSON(response.body)
+      message = obj['message']
+      expect(message).to eq('Role Deleted Succefully')
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
     end
   end
-
 end

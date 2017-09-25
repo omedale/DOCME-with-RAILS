@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   belongs_to :role
   has_many :documents, dependent: :destroy
-  before_save {self.email =  email.downcase}
+  before_save { self.email = email.downcase }
 
   validates :email, uniqueness: true
 

@@ -1,18 +1,22 @@
 class RolesController < ApplicationController
   before_action :authorize
-  before_action :set_role, only: [:show, :update, :destroy]
+  before_action :set_role, only: %i[show update destroy]
 
   def index
     @role = Role.select(:id, :role).all
+    if @role.empty?
+      obj = {
+        message: 'Role not Found'
+      }
+      return json_response(obj, 404)
+      end
     json_response(@role)
   end
 
   def create
-   @role = Role.create!(role_params)
-    if(@role.save)
-      return json_response(@role, :created)
-    end
-    return json_response(@role.errors, :created)
+    @role = Role.create!(role_params)
+    return json_response(@role, :created) if @role.save
+    json_response(@role.errors, :bad)
   end
 
   def show
@@ -20,13 +24,23 @@ class RolesController < ApplicationController
   end
 
   def update
-    @role.update(role_params)
-    head :no_content
+    if @role.update(role_params)
+      obj = {
+        message: 'Role Updated Succefully'
+      }
+      return json_response(obj, :ok)
+    end
+    json_response(@role.errors, :bad)
   end
 
   def destroy
-    @role.destroy
-    head :no_content
+    if @role.destroy
+      obj = {
+        message: 'Role Deleted Succefully'
+      }
+      return json_response(obj, :ok)
+    end
+    json_response(@role.errors, :bad)
   end
 
   private
@@ -36,13 +50,13 @@ class RolesController < ApplicationController
   end
 
   def set_role
-    @role = Role.find(params[:id])
+    @role = Role.select(:id, :role).find(params[:id])
   end
 
   def authorize
-    unless  is_admin
+    unless  admin?
       status = 401
-      obj = {message: 'Unauthorized'}
+      obj = { message: 'Unauthorized' }
       json_response(obj, status)
     end
   end

@@ -10,7 +10,7 @@ RSpec.describe AuthorizeApiRequest, type: :request do
   describe '#call' do
     it 'returns user object' do
       result = request_obj.call
-      expect(result.instance_eval{user}).to eq(users.first)
+      expect(result.instance_eval { user }).to eq(users.first)
     end
 
     context 'when invalid request' do
@@ -33,8 +33,11 @@ RSpec.describe AuthorizeApiRequest, type: :request do
       end
 
       context 'when token is expired' do
-        let(:header) { {
-          'Authorization' =>  expired_token_generator(users.first.id) } }
+        let(:header) do
+          {
+            'Authorization' =>  expired_token_generator(users.first.id)
+          }
+        end
         subject(:request_obj) { described_class.new(header) }
 
         it 'returns Invalid token token error' do
