@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/omedale/DOCME-with-RAILS.svg?branch=setup-ci)](https://travis-ci.org/omedale/DOCME-with-RAILS)
+
 # README
 
 This README would normally document whatever steps are necessary to get the
