@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/omedale/DOCME-with-RAILS.svg?branch=setup-ci)](https://travis-ci.org/omedale/DOCME-with-RAILS)
-
+[![Coverage Status](https://coveralls.io/repos/github/omedale/DOCME-with-RAILS/badge.svg?branch=fix-coveralls)](https://coveralls.io/github/omedale/DOCME-with-RAILS?branch=fix-coveralls)
 # Introduction
 DocMe is full stack document management system which uses roles and priviledges to categorize documents. To access any document you must have access rights and you must have a role. The document are also arranged based on date created.
 
