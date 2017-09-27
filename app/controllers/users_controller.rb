@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate_request, only: %i[login_user register]
-  before_action :set_user, only: %i[show update destroy]
+  before_action :set_user, only: %i[show destroy]
 
   def index
     @user = User.select(:id, :name, :email, :role_id).paginate(page: params[:page], per_page: 20)
@@ -18,15 +18,28 @@ class UsersController < ApplicationController
   end
 
   def update
-   puts params[:name]
-    if @user.update(user_params)
-      obj = {
-        message: 'User Updated Succefully'
-      }
-      return json_response(obj, :ok)
-    end
-    json_response(@user.errors, :bad)
-  end
+    if params[:email]
+      @user = User.where(email: params[:email])
+      unless @user.empty?
+        obj = {
+          message: 'Email Already Exist'
+        }
+        return json_response(obj, :bad)
+      end
+    end 
+
+   @user = User.find(params[:id])
+   @user.attributes = user_params
+ 
+     if @user.save(validate: false)
+       obj = {
+         message: 'User Updated Succefully'
+       }
+       return json_response(obj, :ok)
+     end
+     json_response(@user.errors, :bad)
+   end
+ 
 
   def login_user
     authenticate params[:email], params[:password]
@@ -72,6 +85,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :password, :email)
+    params.permit(:name, :password, :email)
   end
 end

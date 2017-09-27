@@ -24,7 +24,8 @@ class RolesController < ApplicationController
   end
 
   def update
-    if @role.update(role_params)
+    @role.attributes = role_params
+    if @role.save(validate: false)
       obj = {
         message: 'Role Updated Succefully'
       }
