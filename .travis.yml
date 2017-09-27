@@ -7,6 +7,6 @@ before_script:
 script:
   - bundle exec rake ci:tests
 services:
-  - sqlite3
+  - postgresql
 notifications:
   email: false
