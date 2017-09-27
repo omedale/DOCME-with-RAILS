@@ -1,26 +1,20 @@
 [![Build Status](https://travis-ci.org/omedale/DOCME-with-RAILS.svg?branch=setup-ci)](https://travis-ci.org/omedale/DOCME-with-RAILS)
 
-# README
+# Introduction
+DocMe is full stack document management system which uses roles and priviledges to categorize documents. To access any document you must have access rights and you must have a role. The document are also arranged based on date created.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Basic Features
+<ul>
+<li>Users can view documents based on access rights</li>
+<li>Users can search for documents based on access rights</li>
+<li>Users can create document and specify rights</li>
+<li>User can edit document based on priviledges and access rights</li>
+<li>User can delete document</li>
+<li>Admin User can search for documents</li>
+<li>Admin user get list users by page</li>
+<li>User get list documents by page</li>
+</ul>
 
-Things you may want to cover:
+# Endpoints
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Please click **[here](https://docme.herokuapp.com)** to view endpoints documentaion
