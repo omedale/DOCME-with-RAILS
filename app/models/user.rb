@@ -7,4 +7,9 @@ class User < ApplicationRecord
 
   has_secure_password
   validates_presence_of :name, :email, :password
+
+  def self.search(search)
+    where("name LIKE ?", "%#{search}%") 
+    where("email LIKE ?", "%#{search}%")
+  end
 end
