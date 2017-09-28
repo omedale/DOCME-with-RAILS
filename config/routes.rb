@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   resources :roles
 
   resources :users do
+    collection do 
+      get 'search/:q', :action => 'search', :as => 'search'
+    end
     resources :documents
   end
 

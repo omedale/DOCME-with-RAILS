@@ -17,6 +17,18 @@ class UsersController < ApplicationController
     json_response(@user)
   end
 
+  def search
+    if params[:q]
+      @user = User.search(params[:q]).select(:id, :name, :email, :role_id)
+      return json_response(@user, :ok)
+    else
+      obj = {
+        message: 'No search key, Use routes \'/users/search/{search value}\''
+      }
+      return json_response(obj, :bad)
+    end
+  end
+
   def update
     if params[:email]
       @user = User.where(email: params[:email])
