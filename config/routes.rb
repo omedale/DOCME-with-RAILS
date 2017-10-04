@@ -7,12 +7,16 @@ Rails.application.routes.draw do
 
   resources :users do
     collection do 
-      get 'search/:q', :action => 'search', :as => 'search'
+      get 'search/', :action => 'search', :as => 'search'
     end
-    resources :documents
+    resources :documents do
+      collection do 
+        get 'search/', :action => 'search', :as => 'search'
+      end
+    end
   end
 
-  post 'authenticate', to: 'authentication#authenticate'
+  post 'verifyaccess', to: 'users#verifyaccess'
 
   post 'login', to: 'users#login_user'
   post 'register', to: 'users#register'

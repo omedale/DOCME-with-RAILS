@@ -9,7 +9,6 @@ class User < ApplicationRecord
   validates_presence_of :name, :email, :password
 
   def self.search(search)
-    where("name LIKE ?", "%#{search}%") 
-    where("email LIKE ?", "%#{search}%")
+    where("name LIKE ? OR email LIKE ?", "%#{search}%", "%#{search}%")
   end
 end

@@ -19,7 +19,17 @@ Bundler.require(*Rails.groups)
 module DocMeApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
+    
+    #cors configuration
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :post, :options]
+      end
+    end
+
     config.load_defaults 5.1
+    #for heroku eager load
     config.eager_load_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join('lib')
     # Settings in config/environments/* take precedence over those specified here.
