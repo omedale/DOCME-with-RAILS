@@ -5,10 +5,10 @@ class RolesController < ApplicationController
   def index
     @role = Role.select(:id, :role).all
     if @role.empty?
-      obj = {
+      data = {
         message: 'Role not Found'
       }
-      return json_response(obj, 404)
+      return json_response(data, 404)
       end
     json_response(@role)
   end
@@ -26,20 +26,20 @@ class RolesController < ApplicationController
   def update
     @role.attributes = role_params
     if @role.save(validate: false)
-      obj = {
+      data = {
         message: 'Role Updated Succefully'
       }
-      return json_response(obj, :ok)
+      return json_response(data, :ok)
     end
     json_response(@role.errors, :bad)
   end
 
   def destroy
     if @role.destroy
-      obj = {
+      data = {
         message: 'Role Deleted Succefully'
       }
-      return json_response(obj, :ok)
+      return json_response(data, :ok)
     end
     json_response(@role.errors, :bad)
   end
@@ -57,8 +57,8 @@ class RolesController < ApplicationController
   def authorize
     unless  admin?
       status = 401
-      obj = { message: 'Unauthorized' }
-      json_response(obj, status)
+      data = { message: 'Unauthorized' }
+      json_response(data, status)
     end
   end
 end

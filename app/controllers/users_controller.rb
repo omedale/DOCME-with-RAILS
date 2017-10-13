@@ -6,20 +6,20 @@ class UsersController < ApplicationController
   def index
     @user = User.select(:id, :name, :email, :role_id).paginate(page: params[:page], per_page: 20)
     if @user.empty?
-      obj = {
+      data = {
         message: 'User not Found'
       }
-      return json_response(obj, 404)
+      return json_response(data, 404)
     end
     json_response(@user)
   end
 
   def show
     if params[:id].to_i != current_user.id.to_i && current_user.role_id != 1
-      obj = {
+      data = {
         message: 'Unauthorized Access'
       }
-      return json_response(obj, 401)
+      return json_response(data, 401)
     end
     json_response(@user)
   end
@@ -28,34 +28,34 @@ class UsersController < ApplicationController
     if params[:q]
       @user = User.search(params[:q]).select(:id, :name, :email, :role_id).paginate(page: params[:page], per_page: 20)
       if @user.empty?
-        obj = {
+        data = {
           message: 'User not Found'
         }
-        return json_response(obj, 404)
+        return json_response(data, 404)
       end
       return json_response(@user, :ok)
     else
-      obj = {
+      data = {
         message: 'No search key, Use routes \'/users/search/{search value}\''
       }
-      return json_response(obj, :bad)
+      return json_response(data, :bad)
     end
   end
 
   def update
     if params[:id].to_i != current_user.id.to_i && current_user.role_id != 1
-      obj = {
+      data = {
         message: 'Unauthorized Access'
       }
-      return json_response(obj, 401)
+      return json_response(data, 401)
     end
     if params[:email]
       @user = User.where(email: params[:email])
       unless @user.empty?
-        obj = {
+        data = {
           message: 'Email Already Exist'
         }
-        return json_response(obj, :bad)
+        return json_response(data, :bad)
       end
     end 
 
@@ -63,10 +63,10 @@ class UsersController < ApplicationController
    @user.attributes = user_params
  
      if @user.save(validate: false)
-       obj = {
+       data = {
          message: 'User Updated Succefully'
        }
-       return json_response(obj, :ok)
+       return json_response(data, :ok)
      end
      json_response(@user.errors, :bad)
    end
@@ -78,16 +78,16 @@ class UsersController < ApplicationController
 
   def destroy
     if params[:id].to_i != current_user.id.to_i && current_user.role_id != 1
-      obj = {
+      data = {
         message: 'Unauthorized Access'
       }
-      return json_response(obj, 401)
+      return json_response(data, 401)
     end
     if @user.destroy
-      obj = {
+      data = {
         message: 'User Deleted Succefully'
       }
-      return json_response(obj, :ok)
+      return json_response(data, :ok)
     end
     json_response(@user.errors, :bad)
   end
@@ -97,14 +97,14 @@ class UsersController < ApplicationController
     if @user.save
       command = AuthenticateUser.call(params[:email], params[:password])
       if command.success?
-        obj = {
+        data = {
           auth_token: command.result,
           name: @user.name,
           email: @user.email,
           role_id: @user.role_id,
           message: 'User Created Succefully and Logged in'
         }
-        return json_response(obj, :created)
+        return json_response(data, :created)
       else
         render json: { error: command.errors }, status: :unauthorized
       end
@@ -119,8 +119,6 @@ class UsersController < ApplicationController
   private
 
   def verifyaccess_with_token(token)
-    puts "--------------"
-    puts token
     JsonWebToken.decode(token)
   end
 
@@ -139,10 +137,10 @@ class UsersController < ApplicationController
 
   def admin_user
     unless admin?
-      obj = {
+      data = {
         message: 'Unauthorized Access'
       }
-      return json_response(obj, 401)
+      return json_response(data, 401)
     end
   end
 
