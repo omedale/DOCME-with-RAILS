@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe AuthenticateUser, type: :request do
+RSpec.describe AuthenticateUser do
   let!(:roles) { create_list(:role, 4) }
   let!(:users) { create_list(:user, 4, role_id: roles.first.id) }
   subject(:valid_auth_obj) { described_class.new(users.first.email, users.first.password) }
