@@ -12,11 +12,11 @@ module V1
 
       user_role = Role.find(current_user.role_id)
       if current_user.role_id == 1
-        @document = Document.select(:id, :title, :content, :owner, :access, :created_at).all
+        @document = Document.select(:id, :title, :content, :owner, :user_id, :access, :created_at).all
         # @document = Document.select(:id, :title, :content, :owner, :access, :created_at).paginate(page: params[:page], per_page: 20)
       else
-        @document = Document.select(:id, :title, :content, :owner, :access, :created_at)
-                              .where("(user_id = ?) OR (access = ? OR access = ?)", current_user.id, 'public', current_user.role)
+        @document = Document.select(:id, :title, :content, :owner, :access, :user_id, :created_at)
+                              .where("(user_id = ?) OR (access = ?)", current_user.id, 'public')
                               .paginate(page: params[:page], per_page: 20)
       end
       if @document.empty?
@@ -30,7 +30,7 @@ module V1
 
     def search
       if params[:q]
-        @document = Document.search(params[:q], current_user.id, current_user.role).select(:id, :title, :content, :owner, :access, :created_at).paginate(page: params[:page], per_page: 20)
+        @document = Document.search(params[:q], current_user.id, current_user.role).select(:id, :title, :content, :user_id, :owner, :access, :created_at).paginate(page: params[:page], per_page: 20)
 
         if @document.empty?
           data = {
