@@ -16,7 +16,7 @@ module V1
         # @document = Document.select(:id, :title, :content, :owner, :access, :created_at).paginate(page: params[:page], per_page: 20)
       else
         @document = Document.select(:id, :title, :content, :owner, :access, :created_at)
-                              .where("(user_id = ?) OR (access = ? OR access = ?)", current_user.id, 'public', current_user.role)
+                              .where("(user_id = ?) OR (access = ?)", current_user.id, 'public')
                               .paginate(page: params[:page], per_page: 20)
       end
       if @document.empty?
