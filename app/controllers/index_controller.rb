@@ -30,11 +30,16 @@ class IndexController < ApplicationController
     verifyaccess_with_token params[:token]
   end
 
+  def get_user_id
+    render json: {info: JsonWebToken.decode(params[:token])}
+  end
+
   private
 
   def verifyaccess_with_token(token)
     JsonWebToken.decode(token)
   end
+
 
   def authenticate(email, password)
     command = AuthenticateUser.call(email, password)

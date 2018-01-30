@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
 
   post 'verifyaccess', to: 'index#verifyaccess'
+  post 'get-user-id', to: 'index#get_user_id'
 
   post 'login', to: 'index#login_user'
   post 'register', to: 'index#register'
