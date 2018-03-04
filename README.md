@@ -14,7 +14,3 @@ DocMe is full stack document management system which uses roles and priviledges 
 <li>Admin user get list users by page</li>
 <li>User get list documents by page</li>
 </ul>
-
-# Endpoints
-
-Please click **[here](https://docme.herokuapp.com)** to view endpoints documentaion
