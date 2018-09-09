@@ -1,27 +1,26 @@
 module ControllerSpecHelper
-  # generate tokens from user id
+  def json
+    JSON.parse(response.body)
+  end
+
   def token_generator(user_id)
     JsonWebToken.encode(user_id: user_id)
   end
 
-  # generate expired tokens from user id
   def expired_token_generator(user_id)
     JsonWebToken.encode({ user_id: user_id }, (Time.now.to_i - 10))
   end
 
-  # return valid headers
-  def valid_headers
+  def valid_headers(id)
     {
-      "Authorization" => token_generator(user.id),
-      "Content-Type" => "application/json"
+      'Authorization' => token_generator(id)
     }
   end
 
-  # return invalid headers
   def invalid_headers
     {
-      "Authorization" => nil,
-      "Content-Type" => "application/json"
+      'Authorization' => nil,
+      'Content-Type' => 'application/json'
     }
   end
 end
