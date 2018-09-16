@@ -8,13 +8,13 @@ module Response
     not_found_message = "#{model_type} not Found"
     search_error_message = "No search key, Use routes \'/#{model_type}/search/{search value}\'"
     if status == 404
-      render json: message: not_found_message, status: status
+      render json: { message: not_found_message, status: status }
     elsif status == 401
-      render json: message: unauthorized_message, status: status
+      render json: { message: unauthorized_message, status: status }
     elsif status == 400
-      render json: message: search_error_message, status: status
+      render json: { message: search_error_message, status: status }
     else
-      render json: status: status
+      render json: { status: status }
     end
   end
 end
