@@ -5,97 +5,56 @@ module V1
 
     def index
       @user = User.select(:id, :name, :email, :role_id).paginate(page: params[:page], per_page: 20)
-      if @user.empty?
-        data = {
-          message: 'User not Found'
-        }
-        return json_response(data, 404)
-      end
-      json_response(@user)
+
+      return custom_response('user', 404) if @user.empty? 
+      return json_response(@user)
     end
 
     def show
-      if params[:id].to_i != current_user.id.to_i && current_user.role_id != 1
-        data = {
-          message: 'Unauthorized Access'
-        }
-        return json_response(data, 401)
-      end
-      json_response(@user)
+      return custom_response('user', 401) if params[:id].to_i != current_user.id.to_i && !admin?
+      return json_response(@user)
     end
 
     def search
       if params[:q]
         @user = User.search(params[:q]).select(:id, :name, :email, :role_id).paginate(page: params[:page], per_page: 20)
-        if @user.empty?
-          data = {
-            message: 'User not Found'
-          }
-          return json_response(data, 404)
-        end
+        return custom_response('user', 404) if @user.empty?
         return json_response(@user, :ok)
       else
-        data = {
-          message: 'No search key, Use routes \'/users/search/{search value}\''
-        }
-        return json_response(data, :bad)
+        return custom_response('user', 400)
       end
     end
 
     def update
-      if params[:id].to_i != current_user.id.to_i && current_user.role_id != 1
-        data = {
-          message: 'Unauthorized Access'
-        }
-        return json_response(data, 401)
-      end
+      return custom_response('user', 401)  if params[:id].to_i != current_user.id.to_i && !admin?
+  
       if params[:email]
         @user = User.where(email: params[:email])
         unless @user.empty?
-          data = {
-            message: 'Email Already Exist'
-          }
-          return json_response(data, :bad)
+          return json_response({ message: 'Email Already Exist' }, :bad)
         end
       end 
 
-    @user = User.find(params[:id])
-    @user.attributes = user_params
+      @user = User.find(params[:id])
+      @user.attributes = user_params
   
-      if @user.save(validate: false)
-        data = {
-          message: 'User Updated Succefully'
-        }
-        return json_response(data, :ok)
-      end
+      return json_response({ message: 'User Updated Succefully' }, :ok) if @user.save(validate: false)
       json_response(@user.errors, :bad)
     end
   
 
     def destroy
-      if params[:id].to_i != current_user.id.to_i && current_user.role_id != 1
-        data = {
-          message: 'Unauthorized Access'
-        }
-        return json_response(data, 401)
-      end
-      if @user.destroy
-        data = {
-          message: 'User Deleted Succefully'
-        }
-        return json_response(data, :ok)
-      end
-      json_response(@user.errors, :bad)
+      return custom_response('user', 401) if params[:id].to_i != current_user.id.to_i && !admin?
+      return json_response({ message: 'User Deleted Succefully' }, :ok) if @user.destroy
+
+      return json_response(@user.errors, :bad)
     end
 
     private
 
     def admin_user
       unless admin?
-        data = {
-          message: 'Unauthorized Access'
-        }
-        return json_response(data, 401)
+        custom_response('user', 401)
       end
     end
 

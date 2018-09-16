@@ -3,76 +3,46 @@ module V1
     before_action :set_document, only: %i[show update destroy]
 
     def index
-      if params[:user_id].to_i != current_user.id.to_i && current_user.role_id != 1
-        data = {
-          message: 'Unauthorized Access'
-        }
-        return json_response(data, 401)
-      end
+      return custom_response('document', 401) if params[:user_id].to_i != current_user.id.to_i && !admin?
 
-      user_role = Role.find(current_user.role_id)
-      if current_user.role_id == 1
+      if admin?
         @document = Document.select(:id, :title, :content, :owner, :user_id, :access, :created_at).all
-        # @document = Document.select(:id, :title, :content, :owner, :access, :created_at).paginate(page: params[:page], per_page: 20)
       else
         @document = Document.select(:id, :title, :content, :owner, :access, :user_id, :created_at)
                               .where("(user_id = ?) OR (access = ?)", current_user.id, 'public')
                               .paginate(page: params[:page], per_page: 20)
       end
-      if @document.empty?
-        data = {
-          message: 'Documents not Found'
-        }
-        return json_response(data, 404)
-      end
-      json_response(@document, 200)
+      return custom_response('document', 404) if @document.empty?
+
+      return json_response(@document, 200)
     end
 
     def search
       if params[:q]
         @document = Document.search(params[:q], current_user.id, current_user.role).select(:id, :title, :content, :user_id, :owner, :access, :created_at).paginate(page: params[:page], per_page: 20)
 
-        if @document.empty?
-          data = {
-            message: 'Documents not Found'
-          }
-          return json_response(data, 404)
-        end
+        return custom_response('document', 404)  if @document.empty?
+
         return json_response(@document, :ok)
       else
-        data = {
-          message: 'No search key, Use routes \'/users/search/{search value}\''
-        }
-        return json_response(data, :bad)
+        return custom_response('document', 400) 
       end
     end
 
     def show
-      if current_user.role_id == 1 || @document[:access] == current_user.role.role || @document[:access] == 'public' || @document[:user_id] == current_user.id
-        return json_response(@document, 200)
-      end
-      data = {
-        message: 'Unauthorized Access'
-      }
-      return json_response(data, 401)
+      return json_response(@document, 200) if admin? || @document[:access] == current_user.role.role || @document[:access] == 'public' || @document[:user_id] == current_user.id
+
+      return custom_response('document', 401) 
     end
 
     def create
-      if params[:user_id].to_i != current_user.id.to_i
-        data = {
-          message: 'Unauthorized Access'
-        }
-        return json_response(data, 401)
-      end
-      user_role = Role.find(current_user.role_id)
+      custom_response('document', 401) if params[:user_id].to_i != current_user.id.to_i
+
       unless params[:access]
-        data = {
-          message: 'Please Specify Access'
-        }
-        return json_response(data, 500)
+        return json_response({ message: 'Please Specify Access' }, 500)
       end
 
-      if params[:access] == 'public' || params[:access] == 'private' ||  params[:access] == user_role.role
+      if params[:access] == 'public' || params[:access] == 'private' ||  params[:access] == get_user_role
         @document = Document.create!(
           title: params[:title],
           content: params[:content],
@@ -91,45 +61,25 @@ module V1
           return json_response(data, 201)
 
       else  
-
-        data = {
-          message: 'Access should be public, private or your role'
-        }
-        return json_response(data, 500)
+        return json_response({ message: 'Access should be public, private or your role' }, 500)
       end
     end
 
     def update
-      if current_user.role_id == 1 || @document[:user_id] == current_user.id
+      if admin? || @document[:user_id] == current_user.id
         @document.attributes = document_params
-        if @document.save(validate: false)
-          data = {
-            message: 'Document Updated Succefully'
-          }
-          return json_response(data, :ok)
-        end
-        json_response(@document.errors, :bad)
+        return json_response({ message: 'Document Updated Succefully' }, :ok) if @document.save(validate: false)
+        return json_response(@document.errors, :bad)
       end
-      data = {
-        message: 'Unauthorized Access'
-      }
-      return json_response(data, 401)
+      custom_response('document', 401)
     end
 
     def destroy
-      if current_user.role_id == 1 || @document[:user_id] == current_user.id
-        if @document.destroy
-          data = {
-            message: 'Document Deleted Succefully'
-          }
-          return json_response(data, :ok)
-        end
-        json_response(@document.errors, :bad)
+      if admin? || @document[:user_id] == current_user.id
+        return json_response({ message: 'Document Deleted Succefully' }, :ok) if @document.destroy
+        return json_response(@document.errors, :bad)
       end
-      data = {
-        message: 'Unauthorized Access'
-      }
-      return json_response(data, 401)
+      custom_response('document', 401)
     end
 
     private
