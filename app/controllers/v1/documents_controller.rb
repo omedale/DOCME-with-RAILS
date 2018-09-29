@@ -6,10 +6,9 @@ module V1
       return custom_response('document', 401) if params[:user_id].to_i != current_user.id.to_i && !admin?
 
       if admin?
-        @document = Document.select(:id, :title, :content, :owner, :user_id, :access, :created_at).all
+        @document = Document.all
       else
-        @document = Document.select(:id, :title, :content, :owner, :access, :user_id, :created_at)
-                              .where("(user_id = ?) OR (access = ?)", current_user.id, 'public')
+        @document = Document.where("(user_id = ?) OR (access = ?)", current_user.id, 'public')
                               .paginate(page: params[:page], per_page: 20)
       end
       return custom_response('document', 404) if @document.empty?
@@ -19,7 +18,7 @@ module V1
 
     def search
       if params[:q]
-        @document = Document.search(params[:q], current_user.id, current_user.role).select(:id, :title, :content, :user_id, :owner, :access, :created_at).paginate(page: params[:page], per_page: 20)
+        @document = Document.search(params[:q], current_user.id, current_user.role).paginate(page: params[:page], per_page: 20)
 
         return custom_response('document', 404)  if @document.empty?
 
@@ -85,7 +84,7 @@ module V1
     private
 
     def set_document
-      @document = Document.select(:id, :title, :content, :owner, :access, :user_id, :created_at).find(params[:id])
+      @document = Document.find(params[:id])
     end
 
     def document_params
