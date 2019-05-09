@@ -1,3 +1,4 @@
+require 'pry'
 module V1
   class DocumentsController < ApplicationController
     before_action :set_document, only: %i[show update destroy]
@@ -5,15 +6,18 @@ module V1
     def index
       return custom_response('document', 401) if params[:user_id].to_i != current_user.id.to_i && !admin?
 
-      if admin?
-        @document = Document.all
-      else
-        @document = Document.where("(user_id = ?) OR (access = ?)", current_user.id, 'public')
-                              .paginate(page: params[:page], per_page: 20)
+      docs = Rails.cache.fetch("all_docs") do
+        if admin?
+          docs = Document.all
+        else
+          docs = Document.where("(user_id = ?) OR (access = ?)", current_user.id, 'public')
+                                .paginate(page: params[:page], per_page: 20)
+        end
+        docs
       end
-      return custom_response('document', 404) if @document.empty?
+      return custom_response('document', 404) if docs.empty?
 
-      return json_response(@document, 200)
+      return json_response(docs, 200)
     end
 
     def search

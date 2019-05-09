@@ -1,4 +1,5 @@
 class Document < ApplicationRecord
+  include InvalidatesCache
   belongs_to :user
 
   validates_presence_of :title, :content, :access
