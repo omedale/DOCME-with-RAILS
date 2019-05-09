@@ -23,6 +23,7 @@ gem 'simple_command'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'will_paginate', '~> 3.1.0'
 gem 'coveralls', require: false
+gem 'redis-rails'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
@@ -35,6 +36,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.5'
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
+  gem 'pry-rails'
 end
 
 group :development do

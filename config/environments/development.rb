@@ -21,9 +21,9 @@ Rails.application.configure do
       'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
     }
   else
-    config.action_controller.perform_caching = false
+    config.action_controller.perform_caching = true
 
-    config.cache_store = :null_store
+    config.cache_store = :redis_store, "redis://localhost:6379/1/ns"
   end
 
   # Don't care if the mailer can't send.
